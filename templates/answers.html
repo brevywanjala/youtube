@@ -1,0 +1,28 @@
+<!-- templates/answers.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment Answers</title>
+</head>
+<body>
+    <h1>Assignment Answers</h1>
+    <form action="/answers/{{ assignment_id }}" method="post">
+        <input type="hidden" name="assignment_id" value="{{ assignment_id }}">
+
+        <label for="student_id">Your Student ID:</label>
+        <input type="text" id="student_id" name="student_id" required><br>
+
+        {% if questions %}
+        <h2>Questions:</h2>
+        {% for question in questions %}
+        <p><strong>Question {{ loop.index }}:</strong> {{ question[1] }}</p>
+        <textarea name="answer" required></textarea><br>
+        {% endfor %}
+        {% else %}
+        <p>No questions found for the selected assignment.</p>
+        {% endif %}
+
+        <input type="submit" value="Submit Answers">
+    </form>
+</body>
+</html>

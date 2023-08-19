@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Borrowing Users</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+    .text-center {
+      margin-bottom: 20px;
+    }
+    .table-bordered th,
+    .table-bordered td {
+      border: 1px solid #dee2e6;
+    }
+    .table th,
+    .table td {
+      padding: 12px;
+    }
+    .table th {
+      background-color: #f8f9fa;
+    }
+    .student-name {
+      cursor: pointer;
+      color: #007bff;
+    }
+    .student-details {
+      background-color: #f8f9fa;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h3 class="text-center"><i class="fas fa-users"></i> Borrowing Users List</h3>
+        
+        <div>
+            <h4><i class="fas fa-chalkboard-teacher"></i> Teachers</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Teacher Name</th>
+                        <th>Book Title</th>
+                        <th>Borrowed Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for teacher in teachers %}
+                        <tr>
+                            <td>{{ teacher[0] }}</td>
+                            <td>{{ teacher[2] }}</td>
+                            <td>{{ teacher[3] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Students Table -->
+        <div>
+            <h4><i class="fas fa-user-graduate"></i> Students</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Book Title</th>
+                        <th>Borrowed Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student, details in students.items() %}
+                    <tr class="student-row">
+                        <td>
+                            <span class="student-name">
+                                <i class="fas fa-user"></i> {{ student }}
+                                {% if details|length > 1 %}
+                                    <i class="fas fa-chevron-down"></i>
+                                {% endif %}
+                            </span>
+                        </td>
+                        <td>{{ details[0][0] }}</td>
+                        <td>{{ details[0][1] }}</td>
+                    </tr>
+                        {% if details|length > 1 %}
+                            <tr class="student-details" style="display: none;">
+                                <td colspan="3">
+                                    <table class="table table-borderless">
+                                        <tbody>
+                                            {% for book, date in details[1:] %}
+                                                <tr>
+                                                    <td>{{ book }}</td>
+                                                    <td>{{ date }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.student-row').click(function() {
+                $(this).find('.fa-chevron-down').toggleClass('rotate-icon');
+                $(this).next('.student-details').toggle();
+            });
+        });
+    </script>
+    <style>
+        .rotate-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</body>
+</html>

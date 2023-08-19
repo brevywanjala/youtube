@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add Lightbox CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+    <!-- Add Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+       
+    </style>
+    <link rel="stylesheet" href="/static/comments.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Comment System</h1>
+        
+        <hr>
+        <h2>Comments:</h2>
+        <ul>
+            {% for student in students %}
+                <li>
+                    <button class="collapsible" onclick="toggleComments({{ student[0] }})">
+                        {{ student[1] }}:
+                        <span id="comment_count_{{ student[0] }}">0</span> unread comments
+                    </button>
+                    <ul id="comments_{{ student[0] }}" class="content"></ul>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <a href="{{ url_for('teacher_comments_history') }}" class="btn btn-secondary">View Teacher's Comments History</a>
+    </div>
+
+    <!-- Add Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Add Lightbox JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+
+
+    <script>
+        function deleteComment(commentId) {
+            const form = document.getElementById('delete_comment_form_' + commentId);
+            form.submit();
+        }
+        function checkAllCheckboxes() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = !checkbox.checked; // Toggle the checked state
+            });
+        }
+        // Function to toggle the collapsible container and fetch comments when expanded
+        function toggleComments(studentId) {
+            const commentsList = document.getElementById('comments_' + studentId);
+            if (commentsList.style.display === 'block') {
+                // If the comments container is already open, just hide it
+                commentsList.style.display = 'none';
+            } else {
+                // If the comments container is closed, fetch comments and mark as read
+                commentsList.style.display = 'block';
+                fetchComments(studentId);
+                markCommentsAsRead(studentId);
+                fetchUnreadCommentsCount();
+            }
+        }
+
+        function markCommentAsRead(commentId) {
+            fetch('/mark_comment_as_read', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ comment_id: commentId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fetchUnreadCommentsCount();
+                }
+            })
+            .catch(error => console.error('Error marking comment as read:', error));
+        }
+
+        function fetchComments(studentId) {
+            fetch('/get_comments_for_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ student_id: studentId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const commentsList = document.getElementById('comments_' + studentId);
+                commentsList.innerHTML = ""; // Clear the previous comments
+                data.forEach(comment => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = comment.comment;
+                    listItem.addEventListener('click', () => {
+                        markCommentAsRead(comment.id); // Mark the comment as read when clicked
+                    });
+                    commentsList.appendChild(listItem);
+                });
+            })
+            .catch(error => console.error('Error fetching comments:', error));
+        }
+
+        function markCommentsAsRead(studentId) {
+            fetch('/get_comments_for_student', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ student_id: studentId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(comment => {
+                    markCommentAsRead(comment.id); // Mark each comment as read
+                });
+            })
+            .catch(error => console.error('Error fetching and marking comments as read:', error));
+        }
+
+        function fetchUnreadCommentsCount() {
+            fetch('/get_unread_comments_count')
+                .then(response => response.json())
+                .then(data => {
+                    for (const studentId in data) {
+                        const commentCountSpan = document.getElementById('comment_count_' + studentId);
+                        commentCountSpan.innerText = data[studentId];
+                    }
+                })
+                .catch(error => console.error('Error fetching unread comments count:', error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUnreadCommentsCount();
+        });
+
+        setInterval(fetchUnreadCommentsCount, 5000);
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Comment to Teacher</title>
+</head>
+<body>
+    <h1>Send Comment to Teacher</h1>
+    <form method="post" action="/send_comment">
+        <label for="teacher_id">Teacher ID:</label>
+        <input type="text" id="teacher_id" name="teacher_id" required><br>
+
+        <label for="student_id">Your ID:</label>
+        <input type="text" id="student_id" name="student_id" required><br>
+
+        <label for="comment">Comment:</label>
+        <textarea id="comment" name="comment" required></textarea><br>
+
+        <label>Comment Type:</label>
+        <input type="checkbox" id="positive_checkbox" name="is_positive" value="1">
+        <label for="positive_checkbox">Positive</label>
+
+        <input type="checkbox" id="negative_checkbox" name="is_positive" value="0">
+        <label for="negative_checkbox">Negative</label><br>
+
+        <button type="submit">Send Comment</button>
+    </form>
+    <a href="/">Back to Main Page</a>
+
+    <script>
+        const positiveCheckbox = document.getElementById('positive_checkbox');
+        const negativeCheckbox = document.getElementById('negative_checkbox');
+
+        positiveCheckbox.addEventListener('change', () => {
+            if (positiveCheckbox.checked) {
+                negativeCheckbox.checked = false;
+            }
+        });
+
+        negativeCheckbox.addEventListener('change', () => {
+            if (negativeCheckbox.checked) {
+                positiveCheckbox.checked = false;
+            }
+        });
+    </script>
+</body>
+</html>

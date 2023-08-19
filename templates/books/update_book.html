@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Update Book</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('/static/high-school-library-reading-room-29663308.webp');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: rgba(17, 17, 17, 0.799);
+  }
+
+  .background-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Replace with your desired color and opacity */
+    z-index: -1;
+}
+  </style>
+</head>
+<body >
+  <div class="background-overlay"></div>
+  <div class="container" >
+
+    <h1 class="text-center my-4 text-warning">Update Book</h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <form action="/update-book" method="POST" style="max-width:600px;border-radius:10px;background-color:aliceblue;padding:10px;box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);margin-left:auto;margin-right:auto;">
+      <input type="hidden" name="action" value="update">
+      <input type="hidden" name="book_id" value="{{ book[0] }}">
+      <label for="title">Title</label>
+      <input type="text" name="title" id="title" value="{{ book[1] }}" class="form-control"><i class="fas fa-book"></i>
+      <label for="author">Author</label>
+      <input type="text" name="author" id="author" value="{{ book[2] }}" class="form-control"><i class="fas fa-user"></i>
+      <label for="description">Description</label>
+      <textarea name="description" class="form-control" id="description" style="border-radius:10px">{{ book[3] }}</textarea><br>
+      <label for="quantity">Quantity</label>
+      <input type="number" name="quantity" id="quantity" value="{{ book[4] }}" class="form-control"><i class="fas fa-box"></i>
+      <label for="out of stock">Out of stock </label>
+      <input type="number" name="out_of_stock" id="out_of_stock" value="{{ book[5] }}" class="form-control"><i class="fas fa-box"></i>
+      <label for="due_days">Due Days</label>
+      <input type="number" name="due_days" id="due_days" value="{{ book[6] }}" class="form-control"><i class="fas fa-calendar"></i>
+      <input type="submit" value="Update Book" class="btn btn-warning">
+    </form>
+  </div>
+</body>
+</html>

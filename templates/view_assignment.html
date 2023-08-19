@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Assignment</title>
+</head>
+<body>
+    <h1>View Assignment</h1>
+    <h2>Assignment: {{ assignment_details.assignment_name }}</h2>
+    <h2>Teacher: {{ assignment_details.teacher_name }}</h2>
+    
+    <h2>Student: {{ student[1] }}</h2>
+    <form method="POST" action="{{ url_for('assignment_details', assignment_id=assignment_details.assignment_id, student_id=student[0]) }}">
+        {% for question in assignment_details.questions %}
+        <ul>
+            <li>
+                <p>Question: {{ loop.index }}. {{ question[2] }}</p>
+                <p>Correct Answer: {{ question[3] }}</p>
+                <p>Maximum Marks: {{ question[4] }}</p>
+                <p>Student's Answer: {{ student_answers.get(question[0], 'No answer') }}</p>
+                <input type="hidden" name="question_id_{{ question[0] }}" value="{{ question[0] }}">
+                <input type="number" name="awarded_marks_{{ question[0] }}" required>
+            </li>
+        </ul>
+        {% endfor %}
+        <button type="submit">Submit Marks</button>
+    </form>
+</body>
+</html>

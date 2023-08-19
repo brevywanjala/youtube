@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Image Previewer</title>
+  <!-- Add Font Awesome CDN link -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+  
+      
+      input[type="file"] {
+        margin-bottom: 20px;
+      }
+      
+      #imagePreviewContainer {
+        position: relative;
+        max-width: 300px;
+        max-height: 300px;
+      }
+      
+      #imagePreview {
+        max-width: 100%;
+        max-height: 100%;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+      }
+      
+      #removeIcon {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: #ff0000;
+        font-size: 20px;
+        cursor: pointer;
+        display: none;
+      }
+      
+      #removeIcon:hover {
+        color: #cc0000;
+      }
+      
+  </style>
+</head>
+<body>
+  <input type="file" id="uploadInput" accept="image/*">
+  <div id="imagePreviewContainer">
+    <img id="imagePreview" src="#" alt="Preview">
+    <i id="removeIcon" class="fas fa-times-circle"></i>
+  </div>
+
+  <script>
+    // Get references to the input element, the image preview container, and the remove icon
+const uploadInput = document.getElementById('uploadInput');
+const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+const imagePreview = document.getElementById('imagePreview');
+const removeIcon = document.getElementById('removeIcon');
+
+// Add an event listener to the input element to handle image selection
+uploadInput.addEventListener('change', handleImagePreview);
+
+// Add an event listener to the remove icon to clear the image preview
+removeIcon.addEventListener('click', clearImagePreview);
+
+function handleImagePreview(event) {
+  // Get the selected file from the input element
+  const selectedFile = event.target.files[0];
+
+  // Check if a file is selected
+  if (selectedFile) {
+    // Create a FileReader instance
+    const reader = new FileReader();
+
+    // Set up the FileReader to read the image file
+    reader.readAsDataURL(selectedFile);
+
+    // When the image is loaded, set the preview image's source to the image data URL
+    reader.onload = function () {
+      imagePreview.src = reader.result;
+      imagePreviewContainer.style.display = 'block';
+      removeIcon.style.display = 'block';
+    };
+  } else {
+    // If no file is selected, reset the preview image and hide the remove icon
+    imagePreview.src = '#';
+    imagePreviewContainer.style.display = 'none';
+    removeIcon.style.display = 'none';
+  }
+}
+
+function clearImagePreview() {
+  // Clear the image preview and hide the remove icon
+  imagePreview.src = '#';
+  imagePreviewContainer.style.display = 'none';
+  removeIcon.style.display = 'none';
+  // Reset the input field to allow selecting the same file again (if needed)
+  uploadInput.value = '';
+}
+
+  </script>
+</body>
+</html>

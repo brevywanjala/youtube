@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Comments</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Add Lightbox CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+    <!-- Add Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/static/comments.css">
+
+</head>
+<body>
+  <div class="container">
+    <h1>Student Comments for </h1>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+    
+    <form method="post" action="/add_comment">
+        <button type="button" onclick="checkAllCheckboxes()" class="btn btn-primary">Check All</button>
+        {% for student in students %}
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="students[]" value="{{ student[0] }}" id="student_{{ student[0] }}">
+                <label class="form-check-label" for="student_{{ student[0] }}">{{ student[1] }}</label>
+            </div>
+        {% endfor %}
+        <br>
+        <br>
+        <label for="comment">Comment:</label>
+        <textarea name="comment" rows="4" cols="50" class="form-control"></textarea>
+        <br>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<!-- Add Lightbox JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+<script>
+    function checkAllCheckboxes() {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = !checkbox.checked; // Toggle the checked state
+        });
+    }
+</script>
+</body>
+</html>

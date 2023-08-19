@@ -1,0 +1,35 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment Management</title>
+</head>
+<body>
+    <h1>Assignment Management</h1>
+    <form action="/" method="post">
+        <label for="teacher_name">Teacher Name:</label>
+        <input type="text" id="teacher_name" name="teacher_name" required><br>
+        
+        <label for="student_name">Student Name:</label>
+        <input type="text" id="student_name" name="student_name" required><br>
+        
+        <input type="submit" value="Add Student">
+    </form>
+    <hr>
+    <h2>Create Assignment</h2>
+    <form action="/assignment" method="post">
+        <label for="teacher_name">Teacher Name:</label>
+        <input type="text" id="teacher_name" name="teacher_name" required><br>
+        
+        <label for="assignment_text">Assignment Text:</label>
+        <textarea id="assignment_text" name="assignment_text" required></textarea><br>
+        
+        <label for="questions">Questions:</label><br>
+        <textarea id="question1" name="question" required></textarea><br>
+        <textarea id="question2" name="question" required></textarea><br>
+        <!-- Add more question textareas as needed -->
+
+        <input type="submit" value="Create Assignment">
+    </form>
+</body>
+</html>

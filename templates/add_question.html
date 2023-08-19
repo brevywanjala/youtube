@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Question</title>
+</head>
+<body>
+    <h1>Add Question</h1>
+    <form method="post">
+        <label for="assignment_id">Assignment ID:</label>
+        <input type="number" id="assignment_id" name="assignment_id" required>
+        <br>
+        <label for="question_text">Question Text:</label>
+        <textarea id="question_text" name="question_text" rows="4" cols="50" required></textarea>
+        <br>
+        <label for="question_type">Question Type:</label>
+        <select id="question_type" name="question_type" required>
+            <option value="plain">Plain Text</option>
+            <option value="multiple-choice">Multiple Choice</option>
+        </select>
+        <br>
+        <button type="submit">Add Question</button>
+    </form>
+</body>
+</html>

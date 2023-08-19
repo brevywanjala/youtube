@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Performance Monitor</title>
+    <style>
+        /* Styles remain unchanged */
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns in the grid */
+            gap: 20px; /* Gap between grid items */
+        }
+
+        .circle-container {
+            width: 150px;
+            height: 150px; /* Increase height to accommodate both rates */
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column; /* Align items vertically */
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            border: 1px solid #00a9ff;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .fill {
+            height: 100%;
+            background-color: #00a9ff;
+        }
+
+        .negative-fill {
+            height: 100%;
+            background-color: #ff4c4c;
+        }
+
+        .percentage {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* New style to align the negative rate below */
+        .negative-percentage {
+            position: absolute;
+            top: 60%; /* Adjust the space between the rates */
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .undelivered-form {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Performance Monitor</h1>
+    <h2>Request Service</h2>
+    <form method="post" action="/offer_service">
+        <label for="service">Service Description:</label>
+        <input type="text" id="service" name="service" required>
+
+        <button type="submit">Send request</button>
+    </form>
+    <form method="post" action="/service_delivery_rate">
+        <label for="time_interval">Time Interval:</label>
+        <input type="text" name="time_interval" placeholder="time ,eg. 1 week,2 months,3 years">
+        <select id="time_interval" name="time_interval">
+            <option value="1 week">1 Week</option>
+            <option value="2 weeks">2 Weeks</option>
+            <option value="1 month">1 Month</option>
+            <option value="3 months">3 Months</option>
+            <option value="6 months">6 Months</option>
+            <option value="1 year">1 Year</option>
+        </select>
+        <button type="submit">Calculate Delivery Rate</button>
+    </form>
+    <div class="container">
+         <!-- Offer Service Form -->
+  
+    
+        {% if delivery_rate is defined %}
+        <!-- Service Delivery Rate section -->
+        <div>
+            <h2>Service Delivery Rate</h2>
+            <h4>Total Delivered: {{ total_delivered }}</h4>
+            <h4>Total Undelivered: {{ total_undelivered }}</h4>
+            
+            <a href="/undelivered_services">View Undelivered Services</a>
+            <h3>Delivery Rate:</h3>
+            <div class="circle-container">
+                <!-- Positive Rate Container -->
+                <div class="progress-bar">
+                    <div class="fill" style="width: {{ (delivery_rate * 100) | round(2) }}%;"></div>
+                </div>
+                <div class="percentage">{{ (delivery_rate * 100) | round(2) }}%</div>
+
+                <!-- Add space between rates -->
+                <div style="height: 10px;"></div>
+
+                <!-- Negative Rate Container -->
+                
+            </div>
+        </div>
+        {% endif %}
+
+   
+        {% if undelivered_services %}
+        <!-- Undelivered Services section -->
+        <div>
+            <h2>Undelivered Services</h2>
+            <form method="post" action="/undelivered_services" class="undelivered-form">
+                <ul>
+                    {% for service in undelivered_services %}
+                    <li>
+                        <input type="hidden" name="service_id" value="{{ service[0] }}">
+                        <p>Service ID: {{ service[0] }}</p>
+                        <p>Service Description: {{ service[1] }}</p>
+                        <p>Timestamp: {{ service[3] }}</p>
+                        <label>
+                            <input type="checkbox" name="service_status_{{ service[0] }}" value="delivered"> Delivered
+                        </label>
+                        <hr>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <button type="submit">Update Status</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+   
+
+    <hr>
+    <a href="/">Back to Main Page</a>
+</body>
+</html>

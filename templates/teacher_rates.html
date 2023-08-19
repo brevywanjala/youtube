@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Comments Rates</title>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 4 columns in the grid */
+            gap: 20px; /* Gap between grid items */
+        }
+
+        .circle-container {
+            width: 150px;
+            height: 150px; /* Increase height to accommodate both rates */
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column; /* Align items vertically */
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            border: 1px solid #00a9ff;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        .fill {
+            height: 100%;
+            background-color: #00a9ff;
+        }
+
+        .negative-fill {
+            height: 100%;
+            background-color: #ff4c4c;
+        }
+
+        .percentage {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* New style to align the negative rate below */
+        .negative-percentage {
+            position: absolute;
+            top: 60%; /* Adjust the space between the rates */
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+<body>
+    <h1>Teacher Comments Rates</h1>
+
+    <form method="post" action="/calculate_rates">
+        <label for="year">Enter Year:</label>
+        <input type="text" id="year" name="year" placeholder="e.g., 2023">
+
+        <label for="teacher_id">Enter Teacher ID:</label>
+        <input type="text" id="teacher_id" name="teacher_id" placeholder="e.g., 1">
+
+        <button type="submit">Calculate Rates</button>
+    </form>
+
+    <div class="container">
+        {% for teacher_id, rates in teacher_rates.items() %}
+            <div>
+                <li>
+                    {% if rates %}
+                        Teacher ID: {{ teacher_id }}<br>
+                        <div class="circle-container">
+                            <!-- Positive Rate Container -->
+                            <div class="progress-bar">
+                                <div class="fill" style="width: {{ rates['positive_rate'] * 100 }}%;"></div>
+                            </div>
+                            <div class="percentage">{{ (rates['positive_rate'] * 100) | round(2) }}%</div>
+
+                            <!-- Add space between rates -->
+                            <div style="height: 10px;"></div>
+
+                            <!-- Negative Rate Container -->
+                            <div class="progress-bar">
+                                <div class="negative-fill" style="width: {{ rates['negative_rate'] * 100 }}%;"></div>
+                            </div>
+                            <div class="negative-percentage">{{ (rates['negative_rate'] * 100) | round(2) }}%</div>
+                        </div>
+                    {% else %}
+                        No data available for this teacher and year.
+                    {% endif %}
+                </li>
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <a href="/">Back to Main Page</a>
+</body>
+</html>

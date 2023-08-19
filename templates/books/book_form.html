@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ... Include the <head> content from above ... -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Add or Update Book</h1>
+        <form method="post">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ book_data.title if book_data else '' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="author" class="form-label">Author</label>
+                <input type="text" class="form-control" id="author" name="author" value="{{ book_data.author if book_data else '' }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="4">{{ book_data.description if book_data else '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity" name="quantity" value="{{ book_data.quantity if book_data else 1 }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="due_days" class="form-label">Days to Borrow</label>
+                <input type="number" class="form-control" id="due_days" name="due_days" value="{{ book_data.due_days if book_data else 7 }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">{{ 'Update' if book_data else 'Add' }} Book</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

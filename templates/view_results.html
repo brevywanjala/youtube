@@ -1,0 +1,20 @@
+<!-- templates/view_results.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Results</title>
+</head>
+<body>
+    <h1>Results for {{ assignment_name }}</h1>
+    <h2>Total Marks Scored: {{ total_marks }}</h2>
+    <h2>Percentage Score: {{ percentage_score }}%</h2>
+    {% for result in results %}
+    <h3>Question: {{ loop.index }}. {{ result[0] }}</h3>
+    <p>Correct Answer: {{ result[1] }}</p>
+    <p>Marks for this Question: {{ result[2] }}</p>
+    <p>Your Answer: {{ result[3] if result[3] else 'Not answered' }}</p>
+    <p>Marks Awarded: {{ result[4] if result[4] else 'Not awarded yet' }}</p>
+    <hr>
+    {% endfor %}
+</body>
+</html>

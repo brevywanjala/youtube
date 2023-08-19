@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Assignment Details</title>
+</head>
+<body>
+    <h1>Assignment Details</h1>
+    <p>Assignment ID: {{ assignment.assignment_id }}</p>
+    <p>Assignment Name: {{ assignment.assignment_name }}</p>
+
+    <h2>Submit Assignment</h2>
+    <form action="/assignment/{{ assignment.assignment_id }}/students" method="post">
+        <label for="student_id">Student ID:</label><br>
+        <input type="text" id="student_id" name="student_id" required><br>
+
+        {% for question in questions %}
+            <h3>Question {{ loop.index }}</h3>
+            <p>{{ question.question_text }}</p>
+
+            {% if question.question_type == 'plain' %}
+                <textarea id="answer_text_{{ question.question_id }}" name="answer_text_{{ question.question_id }}" rows="4" cols="50"></textarea><br>
+            {% elif question.question_type == 'multiple-choice' %}
+                {% for option in options_dict[question.question_id] %}
+                    <input type="radio" id="selected_option_{{ question.question_id }}_{{ option.option_id }}" name="selected_option_{{ question.question_id }}" value="{{ option.option_id }}">
+                    <label for="selected_option_{{ question.question_id }}_{{ option.option_id }}">{{ option.option_text }}</label><br>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+
+        <input type="submit" value="Submit Assignment">
+    </form>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<html lang="en">
+<head>
+    <!-- ... Include the <head> content from above ... -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        .background {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Adjust as needed */
+            overflow: hidden;
+        }
+
+        .background::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/static/high-school-library-reading-room-29663308.webp');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.5; /* Adjust the opacity as needed */
+        }
+        .card-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9;
+          }
+             
+          .card1 {
+            
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 75%;
+            max-width: 75%;
+            height: 75%;
+
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 99;
+            overflow: auto;
+          
+          
+      }
+      
+      .close-button {
+        margin-top: 20px;
+        margin-left:89%;
+      }
+      
+        
+      #out-of-stock-container {
+        background-color: #f8d7da;
+        padding: 20px;
+        border: 1px solid #d6d6d6;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+
+    /* Style for the warning symbol animation */
+    .warning-symbol {
+        display: inline-block;
+        margin-right: 10px;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+      </style>
+</head>
+<body>
+    <div id="warning-section" style="display: none;"> <!-- Hide the warning symbol by default -->
+        <div class="warning-symbol">
+            <span class="fa-stack fa-2x">
+                <i class="fas fa-circle fa-stack-2x text-danger"></i>
+                <i class="fas fa-exclamation fa-stack-1x fa-inverse"></i>
+            </span>
+        </div>
+    </div>
+    
+    <!-- Out-of-stock books container -->
+    <div id="out-of-stock-container" class="container mt-4">
+        <h3 class="text-center">Out of Stock Books</h3>
+        <div id="out-of-stock-list">
+            <!-- Out of stock books will be displayed here -->
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Reusable search functionality
+        $(document).ready(function() {
+            $('.search-form').each(function(index) {
+                var form = $(this);
+                var user_type = form.find('.user-type');
+                var user_name = form.find('.user-name');
+                var search_results_container = form.find('.search-results-container');
+                var search_results_list = form.find('.search-results-list');
+                var user_not_found = form.find('.user-not-found');
+    
+                search_results_list.on('click', 'li', function() {
+                    var selected_result = $(this).text();
+                    user_name.val(selected_result);
+                    search_results_container.hide();
+                    user_not_found.hide();
+                });
+    
+                user_name.on('input', function() {
+                    var user_type_value = user_type.val();
+                    var search_term = $(this).val();
+    
+                    $.ajax({
+                        url: '/search-users',
+                        method: 'POST',
+                        data: { user_type: user_type_value, search_term: search_term },
+                        success: function(response) {
+                            search_results_list.empty();
+                            search_results_container.hide();
+                            user_not_found.hide();
+    
+                            if (response.length === 0) {
+                                user_not_found.show();
+                            } else {
+                                search_results_container.show();
+                                for (var i = 0; i < response.length; i++) {
+                                    search_results_list.append('<li>' + response[i] + '</li>');
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('AJAX Error:', error);
+                        }
+                    });
+                });
+    
+                user_type.change(function() {
+                    user_name.val('');
+                    search_results_list.empty();
+                    search_results_container.hide();
+                    user_not_found.hide();
+                });
+            });
+        });
+    </script>
+        <!-- Form 1 -->
+        <form class="search-form">
+            <div class="mb-3">
+                <label class="form-label">User Type</label>
+                <select class="form-select user-type" required>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">User Name</label>
+                <input type="text" class="form-control user-name" required>
+            </div>
+            <div class="search-results-container">
+                <ul class="search-results-list"></ul>
+                <p class="user-not-found" style="display: none;">User not found</p>
+            </div>
+        </form>
+        
+        <!-- Form 2 -->
+        <form class="search-form">
+            <div class="mb-3">
+                <label class="form-label">User Type</label>
+                <select class="form-select user-type" required>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">User Name</label>
+                <input type="text" class="form-control user-name" required>
+            </div>
+            <div class="search-results-container">
+                <ul class="search-results-list"></ul>
+                <p class="user-not-found" style="display: none;">User not found</p>
+            </div>
+        </form>
+
+
+    
+    
+    
+    <div class="card1" id="card8" >
+        <div class="container-dynamic ">
+            <img onclick="closeCard()" style="z-index:40;position:;margin-top:2px;display:inline;" class="close-button"  data-ils="4" jsaction="rcuQ6b:trigger.M8vzZb;" class="rg_i Q4LuWd" jsname="Q4LuWd" width="20" height="20" alt="Exit Button png images | PNGWing" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFjzXJ2HBSKgA4ZoGl4RJwbuYSRSYtCjRT8A&amp;usqp=CAU">
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <div class="container mt-4">
+                <h3 class="text-center">Delete Users</h3>
+                <form method="post" id="delete-ukser-form" class="search-form" action="/delete-user">
+                    <div class="mb-3">
+                        <label for="user_type" class="form-label">User Type</label>
+                        <select class="form-select user-type" id="user_type" name="user_type" required>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="user_name" class="form-label">User Name</label>
+                        <input type="text"  class="form-control user-name" id="user_name" name="user_name" required autocomplete="off">
+                    </div>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Delete User</button>
+                    <br><br><br>
+                    <div class="search-results-container">
+                        <ul class="search-results-list"></ul>
+                        <p class="user-not-found" style="display: none;">User not found</p>
+                    </div>
+                    <div id="user-not-found" class="mt-3 text-center" style="display: none;">
+                        <span class="text-danger">User not found</span>
+                    </div>
+                </form>
+                
+            </div>
+            
+        </div>
+      </div>
+      
+    <div class="card1" id="card7" >
+        <div class="container-dynamic ">
+            <img onclick="closeCard()" style="z-index:40;position:;margin-top:2px;display:inline;" class="close-button"  data-ils="4" jsaction="rcuQ6b:trigger.M8vzZb;" class="rg_i Q4LuWd" jsname="Q4LuWd" width="20" height="20" alt="Exit Button png images | PNGWing" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFjzXJ2HBSKgA4ZoGl4RJwbuYSRSYtCjRT8A&amp;usqp=CAU">
+
+            <div class="container">
+                <h1 class="text-center my-4">Add User</h1>
+                <form method="post" action="/add_user">
+                    <div class="mb-3">
+                        <label for="user_type" class="form-label">User Type</label>
+                        <select class="form-select" id="user_type" name="user_type" required>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add User</button>
+                </form>
+            </div>
+
+        </div>
+      </div>
+    
+   
+    <div class="card1" id="card6" >
+        <div class="container-dynamic ">
+            <img onclick="closeCard()" style="z-index:40;position:;margin-top:2px;display:inline;" class="close-button"  data-ils="4" jsaction="rcuQ6b:trigger.M8vzZb;" class="rg_i Q4LuWd" jsname="Q4LuWd" width="20" height="20" alt="Exit Button png images | PNGWing" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTFjzXJ2HBSKgA4ZoGl4RJwbuYSRSYtCjRT8A&amp;usqp=CAU">
+
+            <div class="container my-5">
+                <h1 class="text-center mb-4">Add Book</h1>
+                <form action="/add-book" method="POST">
+                  <input type="hidden" name="action" value="add">
+                  <div class="mb-3">
+                    <label for="title" class="form-label"><i class="fas fa-book"></i> Title</label>
+                    <input type="text" name="title" id="title" class="form-control">
+                  </div>
+                  <div class="mb-3">
+                    <label for="author" class="form-label"><i class="fas fa-user"></i> Author</label>
+                    <input type="text" name="author" id="author" class="form-control">
+                  </div>
+                  <div class="mb-3">
+                    <label for="description" class="form-label"><i class="fas fa-align-left"></i> Description</label>
+                    <textarea name="description" id="description" class="form-control"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="quantity" class="form-label"><i class="fas fa-box"></i> Quantity</label>
+                    <input type="number" name="quantity" id="quantity" class="form-control">
+                  </div>
+                  <div class="mb-3">
+                    <label for="due_days" class="form-label"><i class="fas fa-clock"></i> Due Days</label>
+                    <input type="number" name="due_days" id="due_days" class="form-control">
+                  </div>
+                  <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Add Book</button>
+                </form>
+              </div>
+
+        </div>
+      </div>
+      <div class="card-overlay" id="card-overlay" onclick="closeCard()"></div>
+
+    
+        
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-success">
+                  {{ message | replace("('", "") | replace("', '", " ") | replace("')", "") }}
+              </div>
+          {% endfor %}
+      {% endif %}
+      {% endwith %}
+     
+ 
+        <div id="book_list">
+            <div class="d-flex justify-content-between align-items-center my-3">
+                <h1 class="text-center my-4" style="margin-left:13vw">Library Management System</h1>
+               
+                <div class="p-3">
+                    <button class="btn btn-warning me-5 mb-2" onclick="openCard('card9')"><i class="fas fa-cogs"></i>Settings</button>
+                    
+                    <button class="btn btn-primary me-2 mb-2" onclick="openCard('card6')">Add Book to Collection  </button>
+                    <button class="btn btn-danger me-2 mb-2" onclick="openCard('card8')">Remove user</button>
+                    <button class="btn btn-info mb-2 me-1" onclick="openCard('card7')">New user?</button>
+                </div>
+            </div>
+            <div class=>
+                <div class="mb-3" class="container ms-5" style="max-width:400px;margin-left:20vw">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="search_query" class="form-label">Search Books:</label>
+                            <input  type="text" class="form-control" id="search_query" name="search_query">
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                               
+                                    
+                                    <a href="/borrowing-users" class="card nav-link" style="background-color: #af604c;">
+                                        <i class="fas fa-chalkboard-teac fa-4x" style="color: #fff;"></i>
+                                        <h5 style="color: #fff; padding:5px;">Borrowed Books  <span class="text-info"><h3 style="margin-left:5vw;">{{ current_borrowed}}</h3></span></h5>
+                                        <p style="color: #fff;"></p>
+                                      </a>
+                          
+
+                            </div>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+           
+            <div class="container my-5 bg-info pt-5 background" style="border-radius:10px;"   >
+                <div class="background-overlay"></div>
+            <div class="row" >
+               
+                   
+                {% for book in books %}
+                
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <img src="{{ book.image_url }}" class="card-img-top" alt="{{ book.title }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ book[1] }}</h5>
+                                <p class="card-text">{{ book[3] }}</p>
+                                <p class="card-text"><i class="fas fa-user"></i> {{ book[2] }}</p>
+                                <p class="card-text"><i class="fas fa-box"></i> Quantity: {{ book[4] }}</p>
+                                <a href="{{ url_for('borrow_book', book_id=book[0]) }}" class="btn btn-primary">Borrow</a>
+                                <a href="{{ url_for('update_book', book_id=book[0]) }}" class="btn btn-warning">Update</a>
+                                <a href="{{ url_for('return_book', book_id=book[0]) }}" class="btn btn-info">Return book</a>
+                            </div>
+                        </div>
+                    </div>
+                
+                
+                {% endfor %}
+            </div>
+            {% for book in books %}
+                
+                {% endfor %}
+        </div>
+        
+    </div>
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            function checkOutOfStockBooks() {
+                $.ajax({
+                    url: '/check-out-of-stock',
+                    method: 'GET',
+                    success: function(response) {
+                        var outOfStockContainer = $('#out-of-stock-container');
+                        var warningSection = $('#warning-section');
+    
+                        if (response && response.length > 0) {
+                            // Display the warning symbol and the out-of-stock container
+                            warningSection.css('display', 'block');
+                            outOfStockContainer.css('display', 'block');
+    
+                            var outOfStockList = $('#out-of-stock-list');
+                            outOfStockList.empty(); // Clear previous list
+    
+                            var listHTML = '<ul>';
+                            for (var i = 0; i < response.length; i++) {
+                                listHTML += '<li>' + response[i] + '</li>';
+                            }
+                            listHTML += '</ul>';
+                            outOfStockList.html(listHTML);
+                        } else {
+                            // Hide the warning symbol and the out-of-stock container
+                            warningSection.css('display', 'none');
+                            outOfStockContainer.css('display', 'none');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('AJAX Error:', error);
+                    }
+                });
+            }
+    
+            // Check for out of stock books every 5 minutes (adjust the interval as needed)
+            setInterval(checkOutOfStockBooks, 1 * 60 * 1000); // 5 minutes
+        });
+    </script>
+    
+  
+    
+    
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function openCard(cardId) {
+        var card = document.getElementById(cardId);
+        var overlay = document.querySelector('.card-overlay');
+        card.style.display = 'block';
+        overlay.style.display = 'block';
+      }
+      
+      function closeCard() {
+        var cards = document.querySelectorAll('.card1');
+        var overlay = document.querySelector('.card-overlay');
+        for (var i = 0; i < cards.length; i++) {
+          cards[i].style.display = 'none';
+        }
+        overlay.style.display = 'none';
+      }
+</script>
+<script>
+    $(document).ready(function() {
+        var debounceTimeout;
+        var searchQuery = '';
+    
+        $('#search_query').on('input', function() {
+            clearTimeout(debounceTimeout);
+            
+            searchQuery = $(this).val();
+            
+            debounceTimeout = setTimeout(function() {
+                // Submit the search query once the user has paused typing
+                submitSearch();
+            }, 500); // Delay time in milliseconds
+        });
+    
+        function submitSearch() {
+            $.ajax({
+                url: '/filter_books',
+                method: 'GET',
+                data: { search_query: searchQuery },
+                success: function(response) {
+                    $('#book_list').html(response);
+                    // Repopulate the search input with the last search query
+                    $('#search_query').val(searchQuery);
+                    // Keep the cursor focused on the search bar
+                    $('#search_query').focus();
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX Error:', error);
+                }
+            });
+        }
+    });
+    
+    
+</script>
+
+</body>
+</html>

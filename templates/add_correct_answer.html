@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Correct Answer</title>
+</head>
+<body>
+    <h1>Add Correct Answer</h1>
+    <p>Question ID: {{ question['question_id'] }}</p>
+    <p>Question Text: {{ question['question_text'] }}</p>
+    <form method="post">
+        <label for="correct_answer_text">Correct Answer:</label>
+        <input type="text" id="correct_answer_text" name="correct_answer_text" required>
+        <br>
+        <button type="submit">Add Correct Answer</button>
+    </form>
+</body>
+</html>

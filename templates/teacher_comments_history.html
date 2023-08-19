@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Comments History</title>
+    <!-- Add Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add custom CSS for responsiveness and additional styling */
+        body {
+            padding: 20px;
+        }
+
+        .comment-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-info {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .delete-btn {
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-3">Teacher Comments History</h1>
+        <!-- Add this button in the Teacher Comments History page -->
+<form method="post" action="/clear_teacher_history" class="mb-4">
+    <button type="submit" class="btn btn-danger">Clear Teacher History</button>
+</form>
+
+        <div class="accordion" id="commentsAccordion">
+            {% for comment in comments %}
+                <div class="card comment-container">
+                    <div class="card-header" id="heading{{ comment['id'] }}">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{{ comment['id'] }}" aria-expanded="true" aria-controls="collapse{{ comment['id'] }}">
+                                Comment ID: {{ comment['id'] }}
+                                <span class="float-right comment-info">{{ comment['timestamp'] }}</span>
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse{{ comment['id'] }}" class="collapse" aria-labelledby="heading{{ comment['id'] }}" data-parent="#commentsAccordion">
+                        <div class="card-body">
+                            <p>{{ comment['comment'] }}</p>
+                            <form method="post" action="/delete_comment_teacher">
+                                <input type="hidden" name="comment_id" value="{{ comment['id'] }}">
+                                <button type="button" class="btn btn-sm btn-danger delete-btn" onclick="deleteComment({{ comment['id'] }})">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <a href="/" class="btn btn-primary mt-3">Back to Dashboard</a>
+    </div>
+
+    <!-- Add Bootstrap JS and other libraries -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // ... Existing JavaScript code ...
+        document.getElementById('clearHistoryBtn').addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear your entire history?')) {
+                document.getElementById('clearHistoryForm').submit();
+            }
+        });
+        // Function to delete a comment
+        function deleteComment(commentId) {
+            const form = document.querySelector('form[action="/delete_comment_teacher"]');
+            form.querySelector('input[name="comment_id"]').value = commentId;
+            form.submit();
+        }
+
+        // ... Existing JavaScript code ...
+    </script>
+</body>
+</html>
